@@ -20,12 +20,19 @@ namespace StatMicroservice.Controllers
             _configuration = configuration;
         }
 
-        public async Task<IActionResult> Save(string key, string eventJson, DateTime? clientDT = null)
+        [HttpPost]
+        [Route("add")]
+        public async Task<IActionResult> Add(string key, string eventJson, DateTime? clientDT = null)
         {
 
-
-
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("get")]
+        public IEnumerable<int> Get()
+        {
+            return new List<int>().ToArray();
         }
 
     }
