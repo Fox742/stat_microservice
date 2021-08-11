@@ -55,7 +55,7 @@ namespace StatMicroservice
 
         private void CreateDB()
         {
-            DataBasePort.CreateDBIfNotExists(
+            StatisticsRepository.CreateDBIfNotExists(
                 Configuration.GetConnectionString("CommonConnectionString"),
                 Configuration.GetConnectionString("DataBaseName")
                 );

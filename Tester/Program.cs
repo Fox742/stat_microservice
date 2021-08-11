@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Tester
 {
@@ -10,8 +11,14 @@ namespace Tester
         {
             using (var client = new HttpClient())
             {
+                var parameters = new Dictionary<string, string> { { "key", "concrete_key" }, { "eventJson", "concrete_json" } };
+                var encodedContent = new FormUrlEncodedContent(parameters);
+
                 client.BaseAddress = new Uri("https://localhost:44364/");
-                var response = client.GetAsync(string.Format("statistics/add?key={0}&eventJson={1}&clientDT=","concrete_key","concrete_json")).Result;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+
+                var response = client.PostAsync("statistics/add", encodedContent).Result;
                 Console.WriteLine(response.ToString());
             }
             Console.WriteLine("Bye!");
