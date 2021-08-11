@@ -85,7 +85,7 @@ namespace StatMicroservice
             command += ") VALUES ('" + key + "', '" + eventJson + "', getdate()";
 
             if (clientDT != null)
-                command += ", " + clientDT.ToString();
+                command += ", '" + clientDT.ToString()+"'";
 
             command += ")";
 
