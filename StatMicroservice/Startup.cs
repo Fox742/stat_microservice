@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -15,10 +16,14 @@ namespace StatMicroservice
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        //private readonly ILogger<Startup> _logger;
+        public Startup(IConfiguration configuration/*, ILogger<Startup> logger*/)
         {
             Configuration = configuration;
+        //    _logger = logger;
         }
+
+
 
         public IConfiguration Configuration { get; }
 
@@ -46,6 +51,39 @@ namespace StatMicroservice
             {
                 endpoints.MapControllers();
             });
+
+            CreateDB();
+        }
+
+        private void CreateDB()
+        {
+            try
+            {
+                //string connectionString = @"Integrated Security=True;Server=DESKTOP-NCC7QJ7\SQLEXPRESS" + ";Initial Catalog=master";
+                //string connectionString = Configuration.GetConnectionString("CommonConnectionString").ToString() + "Database=master";
+                //string connectionString = "Server=\".\\\\SQLEXPRESS\";Trusted_Connection=True;" + "Database=master";
+                //string connectionString = "Data Source=\".\\\\SQLEXPRESS\";Integrated Security=SSPI;" + "Initial Catalog=master";
+                //string connectionString = "Data Source=\"DESKTOP-NCC7QJ7\\\\SQLEXPRESS\";Integrated Security=SSPI;" + "Initial Catalog=master";
+                string connectionString = "Server=\"DESKTOP-NCC7QJ7\\SQLEXPRESS\";Integrated Security=SSPI;" + "Initial Catalog=master";
+                //string connectionString = "Data Source=\"(localhost)\\\\SQLEXPRESS\";Integrated Security=SSPI;" + "Initial Catalog=master";
+                //string connectionString = "Server=(localhost);Trusted_Connection=True;" + "Database=master";
+
+                string command = "IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '" + Configuration.GetConnectionString("DataBaseName") + "')"
+                + "BEGIN CREATE DATABASE " + Configuration.GetConnectionString("DataBaseName") + ";"
+                + "END";
+                
+                //string command = "SELECT * FROM sys.databases";
+                SqlConnection myConn = new SqlConnection(connectionString);
+                //SqlCommand myCommand = new SqlCommand(connectionString, myConn);
+                myConn.Open();
+                SqlCommand myCommand = new SqlCommand(command, myConn);
+                myCommand.ExecuteNonQuery();
+                myConn.Close();
+            }
+            catch (Exception e)
+            {
+               //_logger.LogError("Could not create Data Base: "+e.ToString());
+            }
         }
     }
 }
