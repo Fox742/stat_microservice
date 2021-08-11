@@ -13,16 +13,17 @@ namespace StatMicroservice
         private static string _databaseName;
         public static void CreateDBIfNotExists(string commonConnectionString, string databaseName)
         {
-            _commonConnectionString = commonConnectionString;
-            _databaseName = databaseName;
 
-            string connectionString = _commonConnectionString + "Initial Catalog=master";
+            string connectionString = commonConnectionString + "Initial Catalog=master";
             
-            string command = "IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '" + _databaseName + "')"
-            + "BEGIN CREATE DATABASE " + _databaseName + ";"
+            string command = "IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '" + databaseName + "')"
+            + "BEGIN CREATE DATABASE " + databaseName + ";"
             + "END";
 
             ExecuteScalar(connectionString, command);
+
+            _commonConnectionString = commonConnectionString;
+            _databaseName = databaseName;
         }
 
         private static void ExecuteScalar(string connectionString, string command)
@@ -73,6 +74,7 @@ namespace StatMicroservice
 
         public static void WriteStatistics(string key, string eventJson, DateTime? clientDT)
         {
+            CreateDBIfNotExists(_commonConnectionString, _databaseName);
             string tableName = getTableName(key);
             createTableIfNotExists(tableName);
 

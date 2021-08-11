@@ -14,7 +14,7 @@ namespace Tester
                 var parameters = new Dictionary<string, string> { { "key", "concrete_key" }, { "eventJson", "concrete_json" } };
                 var encodedContent = new FormUrlEncodedContent(parameters);
 
-                client.BaseAddress = new Uri("https://localhost:44364/");
+                client.BaseAddress = new Uri("http://localhost:5001/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
 
