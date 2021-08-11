@@ -20,11 +20,14 @@ namespace StatMicroservice.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("add")]
-        public async Task<IActionResult> Add(string key, string eventJson, DateTime? clientDT = null)
+        public IActionResult Add(string key, string eventJson, DateTime? clientDT = null)
         {
-
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return BadRequest("key field should not be empty or whitespace");
+            }
             return Ok();
         }
 
