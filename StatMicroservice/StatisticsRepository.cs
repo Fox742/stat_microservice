@@ -20,13 +20,13 @@ namespace StatMicroservice
             + "BEGIN CREATE DATABASE " + databaseName + ";"
             + "END";
 
-            ExecuteScalar(connectionString, command);
+            ExecuteScalarNonParameters(connectionString, command);
 
             _commonConnectionString = commonConnectionString;
             _databaseName = databaseName;
         }
 
-        private static void ExecuteScalar(string connectionString, string command)
+        private static void ExecuteScalarNonParameters(string connectionString, string command)
         {
             using (SqlConnection myConn = new SqlConnection(connectionString))
             {
@@ -100,7 +100,7 @@ namespace StatMicroservice
 
             string connectionString = _commonConnectionString + "Initial Catalog="+_databaseName;
 
-            ExecuteScalar(connectionString,createCommand);
+            ExecuteScalarNonParameters(connectionString,createCommand);
         }
 
         public static void WriteStatistics(string key, string eventJson, DateTime? clientDT)
@@ -109,22 +109,32 @@ namespace StatMicroservice
             string tableName = getTableName(key);
             createTableIfNotExists(tableName);
 
-            string command = @"INSERT INTO "
-                    + tableName + @" (keyEvent, jsonEvent, timeServer";
+            string command =
+                @"INSERT INTO " + tableName + @" (keyEvent, jsonEvent, timeServer, timeClient) VALUES(@keyEvent, @jsonEvent, @timeServer, @timeClient)";
 
-            if (clientDT != null)
-                command += ", timeClient";
-
-            command += ") VALUES ('" + key + "', '" + eventJson + "', getdate()";
-
-            if (clientDT != null)
-                command += ", '" + clientDT.ToString()+"'";
-
-            command += ")";
 
             string connectionString = _commonConnectionString + "Initial Catalog=" + _databaseName;
 
-            ExecuteScalar(connectionString, command);
+            string clientTime = "null";
+            if (clientDT!=null)
+            {
+                clientTime = "'"+clientDT.ToString()+"'";
+            }
+            using (SqlConnection myConn = new SqlConnection(connectionString))
+            {
+                myConn.Open();
+                SqlCommand myCommand = new SqlCommand(command, myConn);
+                myCommand.Parameters.AddWithValue("@keyEvent", key);
+                myCommand.Parameters.AddWithValue("@jsonEvent", eventJson);
+                myCommand.Parameters.AddWithValue("@timeServer", DateTime.Now.ToUniversalTime());
+                if (clientDT == null)
+                    myCommand.Parameters.AddWithValue("@timeClient",  DBNull.Value);
+                else
+                    myCommand.Parameters.AddWithValue("@timeClient", ((DateTime)clientDT).ToUniversalTime());
+
+                myCommand.ExecuteNonQuery();
+                myConn.Close();
+            }
         }
 
         public static IEnumerable<Dictionary<string, string>> ReadStatistics(string key, DateTime ? start, DateTime ? finish)

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,13 @@ namespace Tester
         {
             using (var client = new HttpClient())
             {
+                var builder = new ConfigurationBuilder()
+               .AddJsonFile($"appsettings.json", true, true);
+
+                var config = builder.Build();
+                var connectionString = config["ConnectionStrings:CommonConnectionString"];
+
+
                 var parameters = new Dictionary<string, string> { { "key", "concrete_key" }, { "eventJson", "concrete_json" } };
                 var encodedContent = new FormUrlEncodedContent(parameters);
 
