@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,7 @@ namespace Tester
         {
             var parameters2 = new Dictionary<string, string> {
                 { "key", (string)oneEvent["key"] },
-                { "eventJson", oneEvent["json"].ToString() },
+                { "eventJson", oneEvent["json"].ToString(Formatting.None) },
                 { "clientDT", (string)oneEvent["dt"] }
             };
 
@@ -80,9 +81,18 @@ namespace Tester
             Console.WriteLine(response4.ToString());
 
             var result = response4.Content.ReadAsStringAsync().Result;
-            Console.WriteLine(result);
 
             var some = JToken.Parse(result);
+            foreach (var oneToken in some)
+            {
+                JToken jToken;
+                if (((JObject)oneToken).TryGetValue("eventJson", out jToken) && jToken.Type == JTokenType.String)
+                {
+                    oneToken["eventJson"] = JToken.Parse(jToken.Value<string>());
+                }
+
+            }
+
             Console.WriteLine(some.ToString(Newtonsoft.Json.Formatting.Indented));
 
         }
