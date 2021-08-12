@@ -10,8 +10,37 @@ namespace Tester
 {
     class Program
     {
+ 
         static void Main(string[] args)
         {
+            using (MicroserviceClient _client = new MicroserviceClient())
+            {
+                Console.WriteLine("Нахмите Enter, чтобы тестировать");
+                Console.ReadLine();
+                Console.WriteLine("Удаляем старую базу (если она есть)");
+                if (!_client.DropDatabase())
+                {
+                    Console.WriteLine("Не получилось удалить базу данных статистики");
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("База удалена");
+                }
+
+            }
+
+
+            // Удалить базу данных (хехе)
+
+            // Распечатать исходные данные
+
+            // Скормить их микросервису
+
+            // Вызвать запрос
+
+            // Распечатать ответ от сервера
+            /*
             using (var client = new HttpClient())
             {
                 var builder = new ConfigurationBuilder()
@@ -61,6 +90,7 @@ namespace Tester
             }
             Console.WriteLine("Bye!");
             Console.ReadLine();
+            */
         }
     }
 }
