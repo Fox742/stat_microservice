@@ -40,5 +40,13 @@ namespace StatMicroservice.Controllers
             return StatisticsRepository.ReadStatistics(key, start, finish).ToArray();
         }
 
+        [HttpPost]
+        [Route("clear")]
+        public IActionResult RemoveAll()
+        {
+            StatisticsRepository.RemoveAll();
+            return Ok();
+        }
+
     }
 }

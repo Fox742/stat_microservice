@@ -160,5 +160,22 @@ namespace StatMicroservice
 
             return ExecuteReader(connectionString, command);
         }
+
+        public static void RemoveAll()
+        {
+            string droppingScript =
+                string.Format(
+                @"IF EXISTS(SELECT * FROM sys.databases WHERE name = '{0}')
+                BEGIN
+                    USE master
+                    ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+                    DROP DATABASE  {0}
+                END",
+                _databaseName);
+
+            string connectionString = _commonConnectionString + "Initial Catalog=master";
+
+            ExecuteScalarNonParameters(connectionString, droppingScript);
+        }
     }
 }

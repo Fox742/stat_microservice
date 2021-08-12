@@ -20,14 +20,18 @@ namespace Tester
                 var config = builder.Build();
                 var connectionString = config["ConnectionStrings:CommonConnectionString"];
 
-
                 var parameters = new Dictionary<string, string> { { "key", "concrete_key" }, { "eventJson", "concrete_json" } };
                 var encodedContent = new FormUrlEncodedContent(parameters);
 
                 client.BaseAddress = new Uri("http://localhost:5001/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-
+                
+                //var response = client.PostAsync("statistics/clear", encodedContent).Result;
+                //Console.WriteLine(response.ToString());
+                
+                
+                
                 var response = client.PostAsync("statistics/add", encodedContent).Result;
                 Console.WriteLine(response.ToString());
 
@@ -52,6 +56,8 @@ namespace Tester
                 Console.WriteLine(result);
 
                 Console.WriteLine(JToken.Parse(result).ToString(Newtonsoft.Json.Formatting.Indented));
+                
+
             }
             Console.WriteLine("Bye!");
             Console.ReadLine();
