@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -34,6 +36,14 @@ namespace Tester
 
                 var response3 = client.PostAsync("statistics/add", encodedContent3).Result;
                 Console.WriteLine(response3.ToString());
+
+                var response4 = client.GetAsync("statistics/get?key=key").Result;
+                Console.WriteLine(response4.ToString());
+
+                var result = response4.Content.ReadAsStringAsync().Result;
+                Console.WriteLine(result);
+
+                Console.WriteLine(JToken.Parse(result).ToString(Newtonsoft.Json.Formatting.Indented));
             }
             Console.WriteLine("Bye!");
             Console.ReadLine();

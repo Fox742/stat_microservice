@@ -35,9 +35,9 @@ namespace StatMicroservice.Controllers
 
         [HttpGet]
         [Route("get")]
-        public IEnumerable<int> Get()
+        public IEnumerable<Dictionary<string, string>> Get(string key, DateTime? start = null, DateTime? finish = null)
         {
-            return new List<int>().ToArray();
+            return StatisticsRepository.ReadStatistics(key, start, finish).ToArray();
         }
 
     }

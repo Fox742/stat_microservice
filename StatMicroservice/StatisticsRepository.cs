@@ -28,11 +28,42 @@ namespace StatMicroservice
 
         private static void ExecuteScalar(string connectionString, string command)
         {
-            SqlConnection myConn = new SqlConnection(connectionString);
-            myConn.Open();
-            SqlCommand myCommand = new SqlCommand(command, myConn);
-            myCommand.ExecuteNonQuery();
-            myConn.Close();
+            using (SqlConnection myConn = new SqlConnection(connectionString))
+            {
+                myConn.Open();
+                SqlCommand myCommand = new SqlCommand(command, myConn);
+                myCommand.ExecuteNonQuery();
+                myConn.Close();
+            }
+        }
+
+        private static IEnumerable<Dictionary<string, string>> ExecuteReader(string connectionString, string command)
+        {
+            List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand com = new SqlCommand(command, connection);
+                try
+                {
+                    connection.Open();
+                    SqlDataReader reader = com.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Dictionary<string, string> item = new Dictionary<string, string>();
+                        item["key"] = reader["keyEvent"].ToString();
+                        item["eventJson"] = reader["jsonEvent"].ToString();
+                        item["ClientDT"] = reader["timeClient"].ToString();
+                        result.Add(item);
+                    }
+                    reader.Close();
+                    connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            return result;
         }
 
         private static string getTableName(string key)
@@ -96,5 +127,28 @@ namespace StatMicroservice
             ExecuteScalar(connectionString, command);
         }
 
+        public static IEnumerable<Dictionary<string, string>> ReadStatistics(string key, DateTime ? start, DateTime ? finish)
+        {
+            CreateDBIfNotExists(_commonConnectionString, _databaseName);
+            string tableName = getTableName(key);
+            createTableIfNotExists(tableName);
+
+            string command = @"SELECT keyEvent, jsonEvent, timeClient FROM " + tableName +
+                @" WHERE (keyEvent = '" + key + "')";
+
+            if (start!=null)
+            {
+                command += " AND (timeClient >= '" + start.ToString() + @"')";
+            }
+
+            if (finish != null)
+            {
+                command += " AND (timeClient <= '" + finish.ToString() + @"')";
+            }
+
+            string connectionString = _commonConnectionString + "Initial Catalog=" + _databaseName;
+
+            return ExecuteReader(connectionString, command);
+        }
     }
 }
