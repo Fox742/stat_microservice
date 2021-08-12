@@ -54,8 +54,8 @@ namespace StatMicroservice
                     {
                         Dictionary<string, string> item = new Dictionary<string, string>();
                         item["key"] = reader["keyEvent"].ToString();
-                        item["eventJson"] = reader["jsonEvent"].ToString();
-                        item["ClientDT"] = reader["timeClient"].ToString();
+                        item["json"] = reader["jsonEvent"].ToString();
+                        item["dt"] = reader["timeClient"].ToString();
                         result.Add(item);
                     }
                     reader.Close();

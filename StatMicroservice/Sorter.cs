@@ -19,7 +19,7 @@ namespace StatMicroservice
                 string key = null;
 
                 // У каждой записи берём поле с JSON-ом и парсим его
-                var currentJSON = JObject.Parse(record["eventJson"]);
+                var currentJSON = JObject.Parse(record["json"]);
 
                 // Берём значение этого ключевого поля и сохраняем в переменную key
                 JToken jToken;

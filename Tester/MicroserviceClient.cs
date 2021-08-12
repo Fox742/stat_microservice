@@ -36,7 +36,7 @@ namespace Tester
         {
             _client.PostAsync("statistics/clear", null);
 
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
 
             string cmd = string.Format(@"SELECT* FROM sys.databases WHERE name = '{0}'", _tableName);
             
@@ -81,20 +81,14 @@ namespace Tester
             Console.WriteLine(response4.ToString());
 
             var result = response4.Content.ReadAsStringAsync().Result;
-
             var some = JToken.Parse(result);
             foreach (var oneToken in some)
             {
-                JToken jToken;
-                if (((JObject)oneToken).TryGetValue("eventJson", out jToken) && jToken.Type == JTokenType.String)
-                {
-                    oneToken["eventJson"] = JToken.Parse(jToken.Value<string>());
-                }
-
+                if (oneToken["json"].Type == JTokenType.String)
+                    oneToken["json"] = JToken.Parse(oneToken["json"].Value<string>());
             }
-
+            
             Console.WriteLine(some.ToString(Newtonsoft.Json.Formatting.Indented));
-
         }
 
         public void Dispose()
