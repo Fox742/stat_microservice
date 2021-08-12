@@ -11,10 +11,19 @@ namespace Tester
     class Program
     {
  
+        private static void printJObjects(List<JObject> objects)
+        {
+            foreach(JObject obj in objects)
+            {
+                Console.WriteLine(obj.ToString());
+            }
+        }
+
         static void Main(string[] args)
         {
             using (MicroserviceClient _client = new MicroserviceClient())
             {
+                InputKeeper input = new InputKeeper();
                 Console.WriteLine("Нахмите Enter, чтобы тестировать");
                 Console.ReadLine();
                 Console.WriteLine("Удаляем старую базу (если она есть)");
@@ -27,7 +36,14 @@ namespace Tester
                 {
                     Console.WriteLine("База удалена");
                 }
+                Console.WriteLine("Входной массив событий (он будет отправлен)");
+                Console.WriteLine();
+                Console.WriteLine();
+                printJObjects(input.objects);
 
+                _client.SendToServer(input.objects);
+                Console.WriteLine("Массив отправлен!");
+                _client.GetSorted();
             }
 
 
@@ -84,7 +100,8 @@ namespace Tester
                 var result = response4.Content.ReadAsStringAsync().Result;
                 Console.WriteLine(result);
 
-                Console.WriteLine(JToken.Parse(result).ToString(Newtonsoft.Json.Formatting.Indented));
+                var some = JToken.Parse(result);
+                Console.WriteLine(some.ToString(Newtonsoft.Json.Formatting.Indented));
                 
 
             }

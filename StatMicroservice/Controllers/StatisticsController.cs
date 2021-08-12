@@ -14,10 +14,13 @@ namespace StatMicroservice.Controllers
     {
         private readonly ILogger<StatisticsController> _logger;
         private readonly IConfiguration _configuration;
+        private Sorter _sorter; 
         public StatisticsController(ILogger<StatisticsController> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
+
+            _sorter = new Sorter();
         }
 
         [HttpPost]
@@ -35,9 +38,13 @@ namespace StatMicroservice.Controllers
 
         [HttpGet]
         [Route("get")]
-        public IEnumerable<Dictionary<string, string>> Get(string key, DateTime? start = null, DateTime? finish = null)
+        public IEnumerable<Dictionary<string, string>> Get(string key, string field, DateTime? start = null, DateTime? finish = null)
         {
-            return StatisticsRepository.ReadStatistics(key, start, finish).ToArray();
+            List<Dictionary<string, string>> rawData = StatisticsRepository.ReadStatistics(key, start, finish).ToList();
+            _sorter.Sort(ref rawData, field);
+
+
+            return rawData.ToArray();
         }
 
         [HttpPost]

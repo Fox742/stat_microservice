@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -50,6 +51,40 @@ namespace Tester
                     }
                 }
             }
+        }
+
+        private void PostEvent(JObject oneEvent)
+        {
+            var parameters2 = new Dictionary<string, string> {
+                { "key", (string)oneEvent["key"] },
+                { "eventJson", oneEvent["json"].ToString() },
+                { "clientDT", (string)oneEvent["dt"] }
+            };
+
+            var encodedContent2 = new FormUrlEncodedContent(parameters2);
+
+            var response2 = _client.PostAsync("statistics/add", encodedContent2).Result;
+        }
+
+        public void SendToServer(List<JObject>objects)
+        {
+            foreach (JObject oneObj in objects)
+            {
+                PostEvent(oneObj);
+            }
+        }
+
+        public void GetSorted()
+        {
+            var response4 = _client.GetAsync("statistics/get?key=some_key&field=field1").Result;
+            Console.WriteLine(response4.ToString());
+
+            var result = response4.Content.ReadAsStringAsync().Result;
+            Console.WriteLine(result);
+
+            var some = JToken.Parse(result);
+            Console.WriteLine(some.ToString(Newtonsoft.Json.Formatting.Indented));
+
         }
 
         public void Dispose()
