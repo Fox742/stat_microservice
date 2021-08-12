@@ -54,7 +54,7 @@ namespace Tester
             }
         }
 
-        private void PostEvent(JObject oneEvent)
+        private void PostEvent(JToken oneEvent)
         {
             var parameters2 = new Dictionary<string, string> {
                 { "key", (string)oneEvent["key"] },
@@ -67,28 +67,29 @@ namespace Tester
             var response2 = _client.PostAsync("statistics/add", encodedContent2).Result;
         }
 
-        public void SendToServer(List<JObject>objects)
+        public void SendToServer(List<JToken>objects)
         {
-            foreach (JObject oneObj in objects)
+            foreach (JToken oneObj in objects)
             {
                 PostEvent(oneObj);
             }
         }
 
-        public void GetSorted()
+        public JToken GetSorted(int pageSize = -1, int pageNumber = -1)
         {
-            var response4 = _client.GetAsync("statistics/get?key=some_key&field=field1").Result;
-            Console.WriteLine(response4.ToString());
+            string urlQuery = "statistics/get?key=some_key&field=field1";
+            
+            var response = _client.GetAsync(urlQuery).Result;
+            Console.WriteLine(response.ToString());
 
-            var result = response4.Content.ReadAsStringAsync().Result;
-            var some = JToken.Parse(result);
-            foreach (var oneToken in some)
+            var result = response.Content.ReadAsStringAsync().Result;
+            var items = JToken.Parse(result);
+            foreach (var oneToken in items)
             {
                 if (oneToken["json"].Type == JTokenType.String)
                     oneToken["json"] = JToken.Parse(oneToken["json"].Value<string>());
             }
-            
-            Console.WriteLine(some.ToString(Newtonsoft.Json.Formatting.Indented));
+            return items;
         }
 
         public void Dispose()

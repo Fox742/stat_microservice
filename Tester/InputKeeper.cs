@@ -7,9 +7,9 @@ namespace Tester
 {
     class InputKeeper
     {
-        List<JObject> _objects = null;
+        List<JToken> _objects = null;
 
-        public List<JObject> objects
+        public List<JToken> objects
         {
             get
             {
@@ -23,7 +23,7 @@ namespace Tester
 
         private void GenerateObjects()
         {
-            _objects = new List<JObject>();
+            _objects = new List<JToken>();
             for (int i=0;i<40;i++)
             {
                 dynamic jsonObj = new JObject();

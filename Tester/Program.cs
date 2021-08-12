@@ -11,11 +11,11 @@ namespace Tester
     class Program
     {
  
-        private static void printJObjects(List<JObject> objects)
+        private static void printJTokens(IEnumerable<JToken> objects)
         {
-            foreach(JObject obj in objects)
+            foreach(JToken token in objects)
             {
-                Console.WriteLine(obj.ToString());
+                Console.WriteLine(token.ToString());
             }
         }
 
@@ -39,11 +39,12 @@ namespace Tester
                 Console.WriteLine("Входной массив событий (он будет отправлен)");
                 Console.WriteLine();
                 Console.WriteLine();
-                printJObjects(input.objects);
+                printJTokens(input.objects);
 
                 _client.SendToServer(input.objects);
                 Console.WriteLine("Массив отправлен!");
-                _client.GetSorted();
+                var items = _client.GetSorted();
+                printJTokens( items.Children() );
             }
 
 
