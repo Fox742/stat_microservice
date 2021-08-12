@@ -16,9 +16,12 @@ namespace StatMicroservice
 
             string connectionString = commonConnectionString + "Initial Catalog=master";
             
-            string command = "IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '" + databaseName + "')"
-            + "BEGIN CREATE DATABASE " + databaseName + ";"
-            + "END";
+            string command = 
+                string.Format(
+                @"IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '{0}')
+                BEGIN CREATE DATABASE {0}
+                END",
+                databaseName);
 
             ExecuteScalarNonParameters(connectionString, command);
 
@@ -91,7 +94,7 @@ namespace StatMicroservice
             BEGIN
                 CREATE TABLE " + tableName + @"(
 	                [id]            [int] IDENTITY(1,1) NOT NULL,
-	                [keyEvent]           [nvarchar] (max) NOT NULL,
+	                [keyEvent]      [nvarchar] (max) NOT NULL,
 	                [jsonEvent]     [nvarchar] (max) NULL,
                     [timeServer]    [datetime] NOT NULL,
 	                [timeClient]    [datetime] NULL
