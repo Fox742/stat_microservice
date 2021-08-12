@@ -40,31 +40,17 @@ namespace StatMicroservice
             }
         }
 
-        private static IEnumerable<Dictionary<string, string>> ExecuteReader(string connectionString, string command)
+        private static List<Dictionary<string, string>> ExecuteReader(SqlCommand command)
         {
             List<Dictionary<string, string>> result = new List<Dictionary<string, string>>();
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                SqlCommand com = new SqlCommand(command, connection);
-                try
-                {
-                    connection.Open();
-                    SqlDataReader reader = com.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        Dictionary<string, string> item = new Dictionary<string, string>();
-                        item["key"] = reader["keyEvent"].ToString();
-                        item["json"] = reader["jsonEvent"].ToString();
-                        item["dt"] = reader["timeClient"].ToString();
-                        result.Add(item);
-                    }
-                    reader.Close();
-                    connection.Close();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                Dictionary<string, string> item = new Dictionary<string, string>();
+                item["key"] = reader["keyEvent"].ToString();
+                item["json"] = reader["jsonEvent"].ToString();
+                item["dt"] = reader["timeClient"].ToString();
+                result.Add(item);
             }
             return result;
         }
@@ -148,22 +134,38 @@ namespace StatMicroservice
             string tableName = getTableName(key);
             createTableIfNotExists(tableName);
 
-            string command = @"SELECT keyEvent, jsonEvent, timeClient FROM " + tableName +
-                @" WHERE (keyEvent = '" + key + "')";
+            string command = 
+                string.Format(
+                    @"SELECT
+                        keyEvent, jsonEvent, timeClient FROM {0}
+                    WHERE (keyEvent = '{1}') 
+                        AND (timeClient >= @start)
+                        AND (timeClient <= @finish)",
+                    tableName,
+                    key
+                );
 
-            if (start!=null)
-            {
-                command += " AND (timeClient >= '" + start.ToString() + @"')";
-            }
+            if (start == null)
+                start = new DateTime(1754, 1, 1, 0, 0, 0);
 
-            if (finish != null)
-            {
-                command += " AND (timeClient <= '" + finish.ToString() + @"')";
-            }
+            if (finish == null)
+                finish = DateTime.MaxValue;
 
             string connectionString = _commonConnectionString + "Initial Catalog=" + _databaseName;
 
-            return ExecuteReader(connectionString, command);
+            List<Dictionary<string, string>> result = new List<Dictionary<string, string>>(); 
+            using (SqlConnection myConn = new SqlConnection(connectionString))
+            {
+                myConn.Open();
+                SqlCommand myCommand = new SqlCommand(command, myConn);
+                myCommand.Parameters.AddWithValue("@start", ((DateTime)start).ToUniversalTime()); // (Минимальная дата в MS SQL Server)
+                myCommand.Parameters.AddWithValue("@finish", ((DateTime)finish).ToUniversalTime());
+
+                result = ExecuteReader(myCommand);
+                myConn.Close();
+            }
+
+            return result;
         }
 
         public static void RemoveAll()

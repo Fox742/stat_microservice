@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using System.Web;
 
 namespace Tester
 {
@@ -75,10 +76,20 @@ namespace Tester
             }
         }
 
-        public JToken GetSorted(int pageSize = -1, int pageNumber = -1)
+        public JToken GetSorted(
+            int pageSize = -1,
+            int pageNumber = -1,
+            DateTime? begin = null,
+            DateTime? finish = null)
         {
             string urlQuery = "statistics/get?key=some_key&field=field1";
-            
+
+            if (begin != null)
+                urlQuery += string.Format("&start={0}", HttpUtility.UrlEncode(((DateTime)begin).ToString("o")));
+
+            if (finish != null)
+                urlQuery += string.Format("&finish={0}", HttpUtility.UrlEncode(((DateTime)finish).ToString("o")));
+
             var response = _client.GetAsync(urlQuery).Result;
             Console.WriteLine(response.ToString());
 

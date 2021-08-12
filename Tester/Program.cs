@@ -43,8 +43,17 @@ namespace Tester
 
                 _client.SendToServer(input.objects);
                 Console.WriteLine("Массив отправлен!");
+                
                 var items = _client.GetSorted();
+                Console.WriteLine("Отсортированный массив целиком:");
                 printJTokens( items.Children() );
+
+                items = _client.GetSorted(
+                    begin: new DateTime (1989,12,31,23,59,59),
+                    finish: new DateTime(2001, 1, 1, 0, 0, 0));
+
+                Console.WriteLine("Отсортированный массив c датой между 1989 годом и двухтысячным:");
+                printJTokens(items.Children());
             }
 
 
