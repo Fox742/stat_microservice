@@ -90,16 +90,18 @@ namespace StatMicroservice
 
         private static void createTableIfNotExists(string tableName)
         {
-            string createCommand = @"IF NOT EXISTS(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'"+ tableName + @"') AND type in (N'U'))
+            string createCommand =
+                string.Format(
+                    @"IF NOT EXISTS(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{0}') AND type in (N'U'))
             BEGIN
-                CREATE TABLE " + tableName + @"(
+                CREATE TABLE {0}(
 	                [id]            [int] IDENTITY(1,1) NOT NULL,
 	                [keyEvent]      [nvarchar] (max) NOT NULL,
 	                [jsonEvent]     [nvarchar] (max) NULL,
                     [timeServer]    [datetime] NOT NULL,
 	                [timeClient]    [datetime] NULL
                 ) ON [PRIMARY]
-            END";
+            END", tableName);
 
             string connectionString = _commonConnectionString + "Initial Catalog="+_databaseName;
 
