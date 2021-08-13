@@ -11,7 +11,7 @@
 
 
 
-`"get get(string key, string field, DateTime? start = null, DateTime? finish = null, int pageSize = -1, int pageNumber = -1)"`  
+`"get: get(string key, string field, DateTime? start = null, DateTime? finish = null, int pageSize = -1, int pageNumber = -1)"`  
 Выбрать отсортированный по полю JSON-а список событий с ключом `"key"`  
 `"key"` - Ключ. Возвращаются только события с указанным ключом  
 `"field"` - Поле внутри JSON-а, по которому происходит сортировка событий  
@@ -22,11 +22,23 @@
 
 
 
-`"get getcount(string key, DateTime? start = null, DateTime? finish = null)"`  
+`"get: getcount(string key, DateTime? start = null, DateTime? finish = null)"`  
 Посчитать количество выбираемых событий с ключом `"key"` между датой и временем `"start"` и `"finish"` (нужно для организации пагинации)  
 `"key"` - Ключ. Возвращаются только события с указанным ключом  
 `"start"` - Дата и время, с начиная с которых надо выбрать события  
 `"finish"` - Дата и время, события до которого необходимо выбрать  
+
+
+
+`"post: clear()"`  
+Очистить базу данных
+
+#### Алгоритм сортировки:
+
+#### Технологии:
+
+Микросервис: ASP.NET Core 3.0 WebAPI
+Тестер: Console .NET Core 3.0
 
 
 ------------------------
