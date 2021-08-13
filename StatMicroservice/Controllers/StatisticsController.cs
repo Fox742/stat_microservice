@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace StatMicroservice.Controllers
 {
@@ -27,50 +27,89 @@ namespace StatMicroservice.Controllers
         [Route("add")]
         public IActionResult Add([FromForm]string key, [FromForm]string eventJson,[FromForm]DateTime? clientDT = null)
         {
-            if (string.IsNullOrWhiteSpace(key))
+            try
             {
-                return BadRequest("key field should not be empty or whitespace");
-            }
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    return BadRequest("Key field should not be empty or whitespace");
+                }
 
-            StatisticsRepository.WriteStatistics(key,eventJson,clientDT);
-            return Ok();
+                StatisticsRepository.WriteStatistics(key, eventJson, clientDT);
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,e.Message);
+            }
         }
 
         [HttpGet]
         [Route("get")]
-        public IEnumerable<Dictionary<string, string>> Get(
-            string key, string field,
-            DateTime? start = null,
-            DateTime? finish = null, 
-            int pageSize=-1,
-            int pageNumber=-1)
+        public IActionResult Get(
+                    string key, string field,
+                    DateTime? start = null,
+                    DateTime? finish = null,
+                    int pageSize = -1,
+                    int pageNumber = -1)
         {
-            List<Dictionary<string, string>> rawData = StatisticsRepository.ReadStatistics(key, start, finish).ToList();
-            _sorter.Sort(ref rawData, field);
+            try
+            {
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    return BadRequest("Key field should not be empty or whitespace");
+                }
 
-            IEnumerable<Dictionary<string, string>> result = rawData;
+                List<Dictionary<string, string>> rawData = StatisticsRepository.ReadStatistics(key, start, finish).ToList();
 
-            if (pageSize > 0 && pageNumber >= 0)
-                result = result.Skip(pageSize * pageNumber).Take(pageSize).ToArray();
-            return result;
+                if (!string.IsNullOrWhiteSpace(field))
+                    _sorter.Sort(ref rawData, field);
+
+                IEnumerable<Dictionary<string, string>> result = rawData;
+
+                if (pageSize > 0 && pageNumber >= 0)
+                    result = result.Skip(pageSize * pageNumber).Take(pageSize).ToArray();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
 
         [HttpGet]
         [Route("getcount")]
-        public int GetCount(
+        public IActionResult GetCount(
             string key,
             DateTime? start = null,
             DateTime? finish = null)
         {
-            return StatisticsRepository.ReadStatistics(key, start, finish).Count();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    return BadRequest("Key field should not be empty or whitespace");
+                }
+                return Ok(StatisticsRepository.ReadStatistics(key, start, finish).Count());
+            }
+            catch(Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
 
         [HttpPost]
         [Route("clear")]
         public IActionResult RemoveAll()
         {
-            StatisticsRepository.RemoveAll();
-            return Ok();
+            try
+            {
+                StatisticsRepository.RemoveAll();
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
         }
 
     }

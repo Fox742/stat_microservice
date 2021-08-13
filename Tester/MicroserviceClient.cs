@@ -97,7 +97,6 @@ namespace Tester
                 urlQuery += string.Format("&pageNumber={0}", pageNumber.ToString());
 
             var response = _client.GetAsync(urlQuery).Result;
-            Console.WriteLine(response.ToString());
 
             var result = response.Content.ReadAsStringAsync().Result;
             var items = JToken.Parse(result);
