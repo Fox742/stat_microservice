@@ -37,7 +37,7 @@
 
 #### Технологии:
 
-Микросервис: ASP.NET Core 3.0 WebAPI
+Микросервис: ASP.NET Core 3.0 WebAPI  
 Тестер: Console .NET Core 3.0
 
 
