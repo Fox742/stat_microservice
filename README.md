@@ -4,16 +4,23 @@
 
 #### API микросервиса:
 `"post: add(string key, string eventJson,DateTime? clientDT = null)"`  
+Добавить информацио о событии в базу данных 
 
 `"key"` - Ключ. События с одним и тем же ключом могут быть запрошены в соответствующем вызове  
 `"eventJson"` - JSON свободного формата, по полю внутри которого может быть произведена сортировка при запросе  
 `"clientDT"` - Дата и время события, передаваемые клиентом  
 
-`"get get(string key, string field,  
-                    DateTime? start = null,  
-                    DateTime? finish = null,  
-                    int pageSize = -1,  
-                    int pageNumber = -1)"`  
+`"get get(string key, string field, DateTime? start = null, DateTime? finish = null, int pageSize = -1, int pageNumber = -1)"`  
+Выбрать отсортированный по полю JSON-а список событий с ключом `"key"`
+
+`"key"` - Ключ. Возвращаются только события с указанным ключом  
+`"field"` - Поле внутри JSON-а, по которому происходит сортировка событий  
+`"start"` - Дата и время, с начиная с которых надо выбрать события  
+`"finish"` - Дата и время, события до которого необходимо выбрать  
+`"pageSize"` - Размер страницы (для пагинации)  
+`"pageNumber"` - Номер страницы (для пагинации)  
+
+
 
 ------------------------
 
