@@ -38,7 +38,12 @@ namespace StatMicroservice.Controllers
 
         [HttpGet]
         [Route("get")]
-        public IEnumerable<Dictionary<string, string>> Get(string key, string field, DateTime? start = null, DateTime? finish = null)
+        public IEnumerable<Dictionary<string, string>> Get(
+            string key, string field,
+            DateTime? start = null,
+            DateTime? finish = null, 
+            int pageSize=-1,
+            int pageNumber=-1)
         {
             List<Dictionary<string, string>> rawData = StatisticsRepository.ReadStatistics(key, start, finish).ToList();
             _sorter.Sort(ref rawData, field);
