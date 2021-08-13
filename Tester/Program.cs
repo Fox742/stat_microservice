@@ -24,7 +24,7 @@ namespace Tester
             using (MicroserviceClient _client = new MicroserviceClient())
             {
                 InputKeeper input = new InputKeeper();
-                Console.Write("Нахмите Enter, чтобы тестировать");
+                Console.Write("Нажмите Enter, чтобы тестировать");
                 Console.ReadLine();
                 Console.WriteLine("Удаляем старую базу (если она есть)");
                 if (!_client.CheckDatabaseDropped())
@@ -68,6 +68,8 @@ namespace Tester
                     _client.GetCount(
                         begin: new DateTime(1989, 12, 31, 23, 59, 59),
                         finish: new DateTime(2001, 1, 1, 0, 0, 0)));
+                Console.Write("Выполнение программы закончено. Нажмите Enter, чтобы выйти");
+                Console.ReadLine();
             }
         }
     }

@@ -39,7 +39,8 @@ namespace StatMicroservice.Controllers
             }
             catch(Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,e.Message);
+                _logger.LogError(e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -72,7 +73,8 @@ namespace StatMicroservice.Controllers
             }
             catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+                _logger.LogError(e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -93,7 +95,8 @@ namespace StatMicroservice.Controllers
             }
             catch(Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+                _logger.LogError(e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -108,7 +111,8 @@ namespace StatMicroservice.Controllers
             }
             catch(Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+                _logger.LogError(e.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
