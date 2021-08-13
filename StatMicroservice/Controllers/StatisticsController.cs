@@ -48,8 +48,21 @@ namespace StatMicroservice.Controllers
             List<Dictionary<string, string>> rawData = StatisticsRepository.ReadStatistics(key, start, finish).ToList();
             _sorter.Sort(ref rawData, field);
 
+            IEnumerable<Dictionary<string, string>> result = rawData;
 
-            return rawData.ToArray();
+            if (pageSize > 0 && pageNumber >= 0)
+                result = result.Skip(pageSize * pageNumber).Take(pageSize).ToArray();
+            return result;
+        }
+
+        [HttpGet]
+        [Route("getcount")]
+        public int GetCount(
+            string key,
+            DateTime? start = null,
+            DateTime? finish = null)
+        {
+            return StatisticsRepository.ReadStatistics(key, start, finish).Count();
         }
 
         [HttpPost]

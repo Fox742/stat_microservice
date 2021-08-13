@@ -33,7 +33,7 @@ namespace Tester
                 new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
         }
 
-        public bool DropDatabase()
+        public bool CheckDatabaseDropped()
         {
             _client.PostAsync("statistics/clear", null);
 
@@ -90,6 +90,12 @@ namespace Tester
             if (finish != null)
                 urlQuery += string.Format("&finish={0}", HttpUtility.UrlEncode(((DateTime)finish).ToString("o")));
 
+            if (pageSize>=0)
+                urlQuery += string.Format("&pageSize={0}", pageSize.ToString());
+
+            if (pageNumber >= 0)
+                urlQuery += string.Format("&pageNumber={0}", pageNumber.ToString());
+
             var response = _client.GetAsync(urlQuery).Result;
             Console.WriteLine(response.ToString());
 
@@ -101,6 +107,24 @@ namespace Tester
                     oneToken["json"] = JToken.Parse(oneToken["json"].Value<string>());
             }
             return items;
+        }
+
+
+        public int GetCount(
+            DateTime? begin = null,
+            DateTime? finish = null)
+        {
+            string urlQuery = "statistics/getcount?key=some_key";
+
+            if (begin != null)
+                urlQuery += string.Format("&start={0}", HttpUtility.UrlEncode(((DateTime)begin).ToString("o")));
+
+            if (finish != null)
+                urlQuery += string.Format("&finish={0}", HttpUtility.UrlEncode(((DateTime)finish).ToString("o")));
+
+            var response = _client.GetAsync(urlQuery).Result;
+            var result = response.Content.ReadAsStringAsync().Result;
+            return int.Parse(result);
         }
 
         public void Dispose()
