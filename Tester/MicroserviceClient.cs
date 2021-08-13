@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Web;
 
@@ -37,7 +36,7 @@ namespace Tester
         {
             _client.PostAsync("statistics/clear", null);
 
-            Thread.Sleep(3000);
+            Thread.Sleep(3000); // Чтобы база успела удалиться - вместо этого можно retry сделать
 
             string cmd = string.Format(@"SELECT* FROM sys.databases WHERE name = '{0}'", _tableName);
             
@@ -107,7 +106,6 @@ namespace Tester
             }
             return items;
         }
-
 
         public int GetCount(
             DateTime? begin = null,

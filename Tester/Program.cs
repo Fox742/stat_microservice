@@ -1,10 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
 
 namespace Tester
 {
@@ -36,7 +32,11 @@ namespace Tester
                 {
                     Console.WriteLine("База удалена");
                 }
-                Console.WriteLine("Входной массив событий (он будет отправлен)");
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("Входной массив событий (он будет отправлен).");
+                Console.WriteLine("(Должен быть отсортирован в порядке убывания значения field1 в поле json)");
                 Console.WriteLine();
                 Console.WriteLine();
                 printJTokens(input.objects);
@@ -45,12 +45,18 @@ namespace Tester
                 Console.WriteLine("Массив отправлен!");
                 
                 var items = _client.GetSorted();
+                Console.WriteLine();
+                Console.WriteLine();
                 Console.WriteLine("Отсортированный массив целиком:");
+                Console.WriteLine("(Должен быть отсортирован в порядке возрастания значения field1 в поле json)");
                 printJTokens( items.Children() );
 
                 items = _client.GetSorted(
                     begin: new DateTime (1989,12,31,23,59,59),
                     finish: new DateTime(2001, 1, 1, 0, 0, 0));
+                
+                Console.WriteLine();
+                Console.WriteLine();
                 Console.WriteLine("Отсортированный массив c датой между 1989 годом и двухтысячным:");
                 printJTokens(items.Children());
 
@@ -58,7 +64,10 @@ namespace Tester
                     pageSize: 5,
                     pageNumber: 2
                     );
-                Console.WriteLine("Отсортированный массив c размером страницы - 5 записей, 2 по счёту:");
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("Отсортированный массив c размером страницы - 5 записей, 2-ая по счёту страница:");
                 printJTokens(items.Children());
 
                 Console.WriteLine("Количество записей (всех): {0}", _client.GetCount());
