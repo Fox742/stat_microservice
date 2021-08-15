@@ -25,7 +25,7 @@ namespace StatMicroservice.Controllers
 
         [HttpPost]
         [Route("add")]
-        public IActionResult Add([FromForm]string key, [FromForm]string eventJson,[FromForm]DateTime? clientDT = null)
+        public IActionResult Add([FromForm]string key, [FromForm]string eventJson,[FromForm]DateTime clientDT)
         {
             try
             {
