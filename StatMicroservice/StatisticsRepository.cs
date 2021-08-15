@@ -85,7 +85,7 @@ namespace StatMicroservice
 	                [keyEvent]      [nvarchar] (max) NOT NULL,
 	                [jsonEvent]     [nvarchar] (max) NULL,
                     [timeServer]    [datetime] NOT NULL,
-	                [timeClient]    [datetime] NULL
+	                [timeClient]    [datetime] NOT NULL
                 ) ON [PRIMARY]
             END", tableName);
 
@@ -94,7 +94,7 @@ namespace StatMicroservice
             ExecuteScalarNonParameters(connectionString,createCommand);
         }
 
-        public static void WriteStatistics(string key, string eventJson, DateTime? clientDT)
+        public static void WriteStatistics(string key, string eventJson, DateTime clientDT)
         {
             CreateDBIfNotExists(_commonConnectionString, _databaseName);
             string tableName = getTableName(key);
@@ -106,11 +106,6 @@ namespace StatMicroservice
 
             string connectionString = _commonConnectionString + "Initial Catalog=" + _databaseName;
 
-            string clientTime = "null";
-            if (clientDT!=null)
-            {
-                clientTime = "'"+clientDT.ToString()+"'";
-            }
             using (SqlConnection myConn = new SqlConnection(connectionString))
             {
                 myConn.Open();
@@ -118,10 +113,7 @@ namespace StatMicroservice
                 myCommand.Parameters.AddWithValue("@keyEvent", key);
                 myCommand.Parameters.AddWithValue("@jsonEvent", eventJson);
                 myCommand.Parameters.AddWithValue("@timeServer", DateTime.Now.ToUniversalTime());
-                if (clientDT == null)
-                    myCommand.Parameters.AddWithValue("@timeClient",  DBNull.Value);
-                else
-                    myCommand.Parameters.AddWithValue("@timeClient", ((DateTime)clientDT).ToUniversalTime());
+                myCommand.Parameters.AddWithValue("@timeClient", ((DateTime)clientDT).ToUniversalTime());
 
                 myCommand.ExecuteNonQuery();
                 myConn.Close();
